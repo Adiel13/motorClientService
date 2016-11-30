@@ -13,9 +13,9 @@ class iniciosesion{
         return pg_connect("user=usrlogin password=l0g1n dbname=clientservice host=localhost port=5432");
     }
 	
-	function iniciarsesion($usuario, $token){
+	function iniciarsesion($usuario, $token, $sistema){
 		$conexion = $this->conexionBD();
-		$query = "select codigo, descripcion from inicio_sesion('kalajpop1191', md5('kevin313')) 
+		$query = "select codigo, descripcion from inicio_sesion('" .$usuario."', '" . $token."') 
 					AS (codigo smallint, descripcion varchar(200))";		
 		if (!$conexion) {
             return false;
@@ -27,7 +27,7 @@ class iniciosesion{
 				if($permisos[0]['codigo'] >= 1){					
 					$this->permisos = $permisos;
 					
-					$query = "select crear_sesion('kalajpop1191', 1::smallint)";
+					$query = "select crear_sesion('".$usuario."', ".$sistema."::smallint)";
 					$resultado = pg_exec($conexion, $query);
 
 					if (!$conexion) {
@@ -44,11 +44,11 @@ class iniciosesion{
         pg_close($conexion);
 		return false;
 	}
+	
+	function esSesionActiva($usuario, $token, $sistema){
+		
+	}
 }
 
-$sesion = new iniciosesion();
-$res = $sesion->iniciarsesion("kalajpop1191", "fafa");
-if($res){
-	echo $sesion->tokenSesion;
-}
+
 ?>
