@@ -25,12 +25,14 @@ $server->wsdl->addComplexType(  'datos_persona_salidad',
 function inicio_sesion($datos) {
 	
 	$sesion = new iniciosesion();
-	$res = $sesion->iniciarsesion($datos['usuario'], md5($datos['token']), $datos['sistema']);
+	$res = $sesion->iniciarsesion($datos['usuario'], $datos['token'], $datos['sistema']);
 	
-	return array('mensaje' => $sesion->tokenSesion);
-	if($res){
+	/*if($res){
 		echo $sesion->tokenSesion;
-	}
+		return array('mensaje' => 'hubo error');
+	}*/
+	return array('mensaje' => $sesion->tokenSesion);
+
     /*$edad_actual = date('Y') - $datos['ano_nac'];
     $msg = 'Hola, ' . $datos['nombre'] . '. Hemos procesado la siguiente informacion ' . $datos['email'] . ', telefono'. $datos['telefono'].' y su Edad actual es: ' . $edad_actual . '.'; 
     return array('mensaje' => $msg);*/

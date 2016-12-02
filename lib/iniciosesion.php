@@ -31,6 +31,7 @@ class iniciosesion{
 					$resultado = pg_exec($conexion, $query);
 
 					if (!$conexion) {
+						$this->tokenSesion = $usuario . $token . $sistema . "hola mundo";
 						return false;
 					}else{						
 						$tokensalida= pg_fetch_all($resultado);				
@@ -39,8 +40,8 @@ class iniciosesion{
 						return true;
 					}
 				}				                
-            }
-        }
+            }			
+        }		
         pg_close($conexion);
 		return false;
 	}
