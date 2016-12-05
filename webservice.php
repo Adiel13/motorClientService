@@ -22,20 +22,27 @@ $server->wsdl->addComplexType(  'datos_persona_salidad',
                                 array('mensaje'   => array('name' => 'mensaje','type' => 'xsd:string'))
 );
 
+
+$server->wsdl->addComplexType(  'esactivo', 
+                                'complexType', 
+                                'struct', 
+                                'all', 
+                                '',
+                                array('mensaje'   => array('name' => 'acitvo','type' => 'xsd:integer'))
+);
+
 function inicio_sesion($datos) {
 	
 	$sesion = new iniciosesion();
 	$res = $sesion->iniciarsesion($datos['usuario'], $datos['token'], $datos['sistema']);
-	
-	/*if($res){
-		echo $sesion->tokenSesion;
-		return array('mensaje' => 'hubo error');
-	}*/
 	return array('mensaje' => $sesion->tokenSesion);
+}
 
-    /*$edad_actual = date('Y') - $datos['ano_nac'];
-    $msg = 'Hola, ' . $datos['nombre'] . '. Hemos procesado la siguiente informacion ' . $datos['email'] . ', telefono'. $datos['telefono'].' y su Edad actual es: ' . $edad_actual . '.'; 
-    return array('mensaje' => $msg);*/
+function esSesionActiva($datos){
+	$sesion = new iniciosesion();
+	$res = $sesion->esSesionActiva($datos['usuario'], $datos['token'], $datos['sistema']);
+	return array('mensaje' => $res);
+	
 }
 
 $server->register(  'inicio_sesion', // nombre del metodo o funcion
@@ -46,6 +53,16 @@ $server->register(  'inicio_sesion', // nombre del metodo o funcion
                     'rpc', // style
                     'encoded', // use
                     'La siguiente funcion recibe las credenciales e inicia sesion' 
+);
+
+$server->register(  'esSesionActiva', // nombre del metodo o funcion
+                    array('datos_persona_entrada' => 'tns:datos_persona_entrada'), // parametros de entrada
+                    array('return' => 'tns:esactivo'), // parametros de salida
+                    'urn:mi_ws1', // namespace
+                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
+                    'rpc', // style
+                    'encoded', // use
+                    'Funcion que verifica si es activa una sesión' 
 );
 
 $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';

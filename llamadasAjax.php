@@ -19,6 +19,12 @@ if($_POST['iniciosesion']){
 					'sistema' => 1);
 	$respuesta = sendDataWS("datos_persona_entrada", $datos, 'inicio_sesion');	
 	print_r (json_encode($respuesta));
+}else if($_POST['verificarsesion']){
+	$datos = array('usuario' => $_POST['usuariosesion'],
+					'token' => $_POST['tokensesion'],
+					'sistema' => $_POST['sistemasesion']);
+	$respuesta = sendDataWS("datos_persona_entrada", $datos, 'esSesionActiva');	
+	print_r (json_encode($respuesta));
 }
 
 ?>
