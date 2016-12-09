@@ -1,6 +1,8 @@
 <?php
 require_once('lib/nusoap.php');
 include_once('iniciosesion.php');
+include_once('obtenerinfo.php');
+
 $server = new nusoap_server();
 $server->configureWSDL('Servicio ITG', 'urn:mi_ws1');
 
@@ -13,6 +15,15 @@ $server->wsdl->addComplexType(  'datos_persona_entrada',
                                       'token'    => array('name' => 'email','type' => 'xsd:string'),
                                       'sistema' => array('name' => 'telefono','type' => 'xsd:string'))
 );
+
+$server->wsdl->addComplexType(  'datos_usuario', 
+                                'complexType', 
+                                'struct', 
+                                'all', 
+                                '',
+                                array('usuario'   => array('name' => 'nombre','type' => 'xsd:string'))
+);
+
 
 $server->wsdl->addComplexType(  'datos_persona_salidad', 
                                 'complexType', 
@@ -50,6 +61,13 @@ function cerrarSesion($datos){
     return array('mensaje' => $res);    
 }
 
+
+function obtenerDatosPersonales($datos){
+    $info = new obtenerinfo();
+    $res = $info->obtenerDatos($datos['usuario']);
+    return array('mensaje' => $res);    
+}
+
 $server->register(  'inicio_sesion', // nombre del metodo o funcion
                     array('datos_persona_entrada' => 'tns:datos_persona_entrada'), // parametros de entrada
                     array('return' => 'tns:datos_persona_salidad'), // parametros de salida
@@ -78,6 +96,17 @@ $server->register(  'cerrarSesion', // nombre del metodo o funcion
                     'rpc', // style
                     'encoded', // use
                     'Funcion que cierra la sesion' 
+);
+
+
+$server->register(  'obtenerDatosPersonales', // nombre del metodo o funcion
+                    array('datos_usuario' => 'tns:datos_usuario'), // parametros de entrada
+                    array('return' => 'tns:datos_persona_salidad'), // parametros de salida
+                    'urn:mi_ws1', // namespace
+                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
+                    'rpc', // style
+                    'encoded', // use
+                    'Funcion que obtiene los datos de un empleado' 
 );
 
 $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';
