@@ -41,8 +41,13 @@ function inicio_sesion($datos) {
 function esSesionActiva($datos){
 	$sesion = new iniciosesion();
 	$res = $sesion->esSesionActiva($datos['usuario'], $datos['token'], $datos['sistema']);
-	return array('mensaje' => $res);
-	
+	return array('mensaje' => $res);	
+}
+
+function cerrarSesion($datos){
+    $sesion = new iniciosesion();
+    $res = $sesion->cerrarSesion($datos['usuario'], $datos['token'], $datos['sistema']);
+    return array('mensaje' => $res);    
 }
 
 $server->register(  'inicio_sesion', // nombre del metodo o funcion
@@ -63,6 +68,16 @@ $server->register(  'esSesionActiva', // nombre del metodo o funcion
                     'rpc', // style
                     'encoded', // use
                     'Funcion que verifica si es activa una sesión' 
+);
+
+$server->register(  'cerrarSesion', // nombre del metodo o funcion
+                    array('datos_persona_entrada' => 'tns:datos_persona_entrada'), // parametros de entrada
+                    array('return' => 'tns:esactivo'), // parametros de salida
+                    'urn:mi_ws1', // namespace
+                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
+                    'rpc', // style
+                    'encoded', // use
+                    'Funcion que cierra la sesion' 
 );
 
 $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';

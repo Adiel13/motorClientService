@@ -47,7 +47,7 @@ class iniciosesion{
 	}
 	
 	function esSesionActiva($usuario, $token, $sistema){
-				$conexion = $this->conexionBD();
+		$conexion = $this->conexionBD();
 		$query = "select verificar_sesion('".$usuario."'::text, '".$token."'::text, ".$sistema."::smallint)";		
 		if (!$conexion) {
             return false;
@@ -65,6 +65,28 @@ class iniciosesion{
         }		
         pg_close($conexion);
 		return false;
+	}
+
+	function cerrarSesion($usuario, $token, $sistema){
+		$conexion = $this->conexionBD();
+		$query = "select cerrar_sesion('".$usuario."'::text, '".$token."'::text, ".$sistema."::smallint)";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $activo = pg_fetch_all($resultado);				
+				if($activo[0]['cerrar_sesion'] == 1){					
+					return 1;
+				}else{
+					return 0;
+				}				                
+            }			
+        }		
+        pg_close($conexion);
+		return false;
+		
 	}
 }
 
