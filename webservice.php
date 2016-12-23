@@ -2,6 +2,7 @@
 require_once('lib/nusoap.php');
 include_once('iniciosesion.php');
 include_once('obtenerinfo.php');
+include_once('motorventa.php');
 
 $server = new nusoap_server();
 $server->configureWSDL('Servicio ITG', 'urn:mi_ws1');
@@ -13,7 +14,16 @@ $server->wsdl->addComplexType(  'datos_persona_entrada',
                                 '',
                                 array('usuario'   => array('name' => 'nombre','type' => 'xsd:string'),
                                       'token'    => array('name' => 'email','type' => 'xsd:string'),
-                                      'sistema' => array('name' => 'telefono','type' => 'xsd:string'))
+                                      'sistema' => array('name' => 'sistema','type' => 'xsd:string'))
+);
+
+$server->wsdl->addComplexType(  'datos_venta_entrada', 
+                                'complexType', 
+                                'struct', 
+                                'all', 
+                                '',
+                                array('token'   => array('name' => 'token','type' => 'xsd:string'),
+                                      'sistema' => array('name' => 'sistema','type' => 'xsd:integer'))
 );
 
 $server->wsdl->addComplexType(  'datos_usuario', 
@@ -43,7 +53,6 @@ $server->wsdl->addComplexType(  'esactivo',
 );
 
 function inicio_sesion($datos) {
-	
 	$sesion = new iniciosesion();
 	$res = $sesion->iniciarsesion($datos['usuario'], $datos['token'], $datos['sistema']);
 	return array('mensaje' => $sesion->tokenSesion);
@@ -61,12 +70,27 @@ function cerrarSesion($datos){
     return array('mensaje' => $res);    
 }
 
-
 function obtenerDatosPersonales($datos){
     $info = new obtenerinfo();
     $res = $info->obtenerDatos($datos['usuario']);
     return array('mensaje' => $res);    
 }
+
+function crearVenta($datos){
+    $venta = new motorVenta();
+    $res = $venta->crearVenta($datos['token'], $datos['sistema']);
+    return array('mensaje' => $res);    
+}
+
+$server->register(  'crearVenta', // nombre del metodo o funcion
+                    array('datos_venta_entrada' => 'tns:datos_venta_entrada'), // parametros de entrada
+                    array('return' => 'tns:esactivo'), // parametros de salida
+                    'urn:mi_ws1', // namespace
+                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
+                    'rpc', // style
+                    'encoded', // use
+                    'La siguiente funcion crea una venta' 
+);
 
 $server->register(  'inicio_sesion', // nombre del metodo o funcion
                     array('datos_persona_entrada' => 'tns:datos_persona_entrada'), // parametros de entrada

@@ -55,8 +55,8 @@ class motorventa{
     }
 }
 
-$obj = new motorventa();
+/*$obj = new motorventa();
 $idventa= $obj->crearVenta("3f2b1341b13a49aacedb7da8380451b2", 1);
-echo $obj->finalizarVenta($idventa);
+echo $obj->finalizarVenta($idventa);*/
 
 ?>
