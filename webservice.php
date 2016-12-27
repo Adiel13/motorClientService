@@ -82,6 +82,22 @@ function crearVenta($datos){
     return array('mensaje' => $res);    
 }
 
+function finalizarVenta($datos){
+    $venta = new motorVenta();
+    $res = $venta->finalizarVenta($datos['mensaje']);
+    return array('mensaje' => $res);    
+}
+
+$server->register(  'finalizarVenta', // nombre del metodo o funcion
+                    array('esactivo' => 'tns:esactivo'), // parametros de entrada
+                    array('return' => 'tns:esactivo'), // parametros de salida
+                    'urn:mi_ws1', // namespace
+                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
+                    'rpc', // style
+                    'encoded', // use
+                    'La siguiente funcion crea una venta' 
+);
+
 $server->register(  'crearVenta', // nombre del metodo o funcion
                     array('datos_venta_entrada' => 'tns:datos_venta_entrada'), // parametros de entrada
                     array('return' => 'tns:esactivo'), // parametros de salida
