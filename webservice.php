@@ -55,7 +55,9 @@ $server->wsdl->addComplexType(  'esactivo',
 function inicio_sesion($datos) {
 	$sesion = new iniciosesion();
 	$res = $sesion->iniciarsesion($datos['usuario'], $datos['token'], $datos['sistema']);
-	return array('mensaje' => $sesion->tokenSesion);
+	//return array('mensaje' =>  print_r($datos,true));
+	$arr = array('token' => $sesion->tokenSesion, 'permisos' => $sesion->permisos);
+	return array('mensaje' => json_encode($arr));
 }
 
 function esSesionActiva($datos){

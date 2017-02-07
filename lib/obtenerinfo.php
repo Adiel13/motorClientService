@@ -13,7 +13,10 @@ class obtenerinfo{
     function obtenerDatos($idempleado){
 
 		$conexion = $this->conexionBD();
-		$query = "select * from empleado where id_empleado = '" . $idempleado . "'";		
+		$query = "select e.*, tu.*  from empleado e inner join usuario u on 
+	e.id_empleado = u.id_empleado 
+    inner join tipo_usuario tu on
+    	tu.tipo_usuario = u.tipo_usuario where e.id_empleado = '" . $idempleado . "'";		
 		if (!$conexion) {
             return false;
         } else {
