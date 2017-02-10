@@ -1,5 +1,6 @@
 <?php
 require_once('lib/nusoap.php');
+include_once('../lib/obtenerinfo.php');
 
 function sendDataWS($nombreParametro, $data, $nombreMetodo){
 	$WSDL = "http://67.205.153.106/lib/webservice.php?wsdl";
@@ -34,6 +35,10 @@ if($_POST['iniciosesion']){
 }else if($_POST['datospersonales']){
 	$datos = array('usuario' => $_POST['usuariosesion']);
 	$respuesta = sendDataWS("datos_usuario", $datos, 'obtenerDatosPersonales');	
+	print_r (json_encode($respuesta));
+}else if($_POST['sucursales']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerListadoSucursales($_POST['tokensesion']);
 	print_r (json_encode($respuesta));
 }
 
