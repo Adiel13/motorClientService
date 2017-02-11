@@ -40,6 +40,13 @@ if($_POST['iniciosesion']){
     $f = new obtenerinfo();
     $respuesta = $f->obtenerListadoSucursales($_POST['tokensesion']);
 	print_r (json_encode($respuesta));
+}else if($_POST['tablallegada']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerTablaLlegada($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
+	print_r (json_encode($respuesta));
+}else if($_POST['graficollegada']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerPromedioLlegada($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
+	print_r (json_encode($respuesta));
 }
-
 ?>

@@ -33,7 +33,7 @@ class obtenerinfo{
     
     function obtenerPromedioLlegada($fechainicio, $fechafin, $sucursal){
         $conexion = $this->conexionBD();
-		$query = "select extract(hour from inicio_venta), count(*) from venta where
+		$query = "select extract(hour from inicio_venta) as y, count(*) as a from venta where
         id_sucursal = '".$sucursal."' and
         inicio_venta between '".$fechainicio."' and '".$fechafin."'
         group by 1
@@ -46,7 +46,34 @@ class obtenerinfo{
             $total = pg_num_rows($resultado);
             if ($total > 0) {
                 $datos = pg_fetch_all($resultado);				
-				return json_encode($datos);
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;
+    }
+    
+    function obtenerTablaLlegada($fechainicio, $fechafin, $sucursal){
+        $conexion = $this->conexionBD();
+		$query = "select e.nombre || ' ' || e.apellido as nombre, t.total as usuario, count(*) as total from venta v inner join empleado e on 
+            v.id_empleado = e.id_empleado
+                inner join (select v.id_sucursal, count(*) as total from venta v 
+                    where
+                        inicio_venta between '".$fechainicio."' and '".$fechafin."'
+                        group by 1) t on
+                    t.id_sucursal = v.id_sucursal
+            where
+                v.inicio_venta between '".$fechainicio."' and '".$fechafin."' and
+                v.id_sucursal = '".$sucursal."'
+            group by 1, 2";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
             }			
         }		
         pg_close($conexion);
