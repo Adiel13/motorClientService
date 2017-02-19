@@ -53,10 +53,32 @@ class motorventa{
         pg_close($conexion);
 		return false;
     }
+    
+    function ventaSatisfactoria($idventa, $monto, $cantidad, $producto, $descripcion){
+        $conexion = $this->conexionBD();
+		$query = "select agregar_venta_satisfactoria(".$idventa."::smallint, ".$monto."::float, ".$cantidad."::smallint, '".$producto."'::text, '".$descripicion."'::text)";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $venta = pg_fetch_all($resultado);
+                
+				if($venta[0]['agregar_venta_satisfactoria'] == 1){					
+					return $venta[0]['agregar_venta_satisfactoria'];
+				}else{
+					return -1;
+				}				                
+            }			
+        }		
+        pg_close($conexion);
+		return false;
+    }
 }
 
 /*$obj = new motorventa();
-$idventa= $obj->crearVenta("3f2b1341b13a49aacedb7da8380451b2", 1);
-echo $obj->finalizarVenta($idventa);*/
+$idventa= $obj->ventaSatisfactoria(84, 5000, 1, '','');
+echo $$idventa;*/
 
 ?>

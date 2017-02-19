@@ -48,5 +48,17 @@ if($_POST['iniciosesion']){
     $f = new obtenerinfo();
     $respuesta = $f->obtenerPromedioLlegada($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
 	print_r (json_encode($respuesta));
+}else if($_POST['graficoatencionvsventa']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerAtencionVsVenta($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
+	print_r (json_encode($respuesta));
+}else if($_POST['obteneratendidos']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerNumeroAtendidos($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
+	print_r (json_encode($respuesta));
+}else if($_POST['obtenertiempo']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerTiempoAtencion($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
+	print_r (json_encode($respuesta));
 }
 ?>

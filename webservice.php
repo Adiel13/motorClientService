@@ -52,10 +52,28 @@ $server->wsdl->addComplexType(  'esactivo',
                                 array('mensaje'   => array('name' => 'acitvo','type' => 'xsd:integer'))
 );
 
+$server->wsdl->addComplexType(  'datos_venta', 
+                                'complexType', 
+                                'struct', 
+                                'all', 
+                                '',
+                                array(  'venta'   => array('name' => 'venta','type' => 'xsd:integer'),
+                                        'monto' => array('name' => 'monto','type' => 'xsd:float'),
+                                        'cantidad' => array('name' => 'cantidad','type' => 'xsd:integer'),
+                                        'producto' => array('name' => 'producto','type' => 'xsd:string'),
+                                        'descripcion' => array('name' => 'descripcion','type' => 'xsd:string')
+                                     )
+);
+
+function ventaSatisfactoria($datos) {
+	$venta = new motorVenta();
+	$res = $venta->ventaSatisfactoria($datos['venta'], $datos['monto'], $datos['cantidad'], $datos['producto'], $datos['descripcion']);
+	return array('mensaje' => $res);
+}
+
 function inicio_sesion($datos) {
 	$sesion = new iniciosesion();
 	$res = $sesion->iniciarsesion($datos['usuario'], $datos['token'], $datos['sistema']);
-	//return array('mensaje' =>  print_r($datos,true));
 	$arr = array('token' => $sesion->tokenSesion, 'permisos' => $sesion->permisos);
 	return array('mensaje' => json_encode($arr));
 }
@@ -141,14 +159,24 @@ $server->register(  'cerrarSesion', // nombre del metodo o funcion
 );
 
 
-$server->register(  'obtenerDatosPersonales', // nombre del metodo o funcion
-                    array('datos_usuario' => 'tns:datos_usuario'), // parametros de entrada
-                    array('return' => 'tns:datos_persona_salidad'), // parametros de salida
-                    'urn:mi_ws1', // namespace
-                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
-                    'rpc', // style
-                    'encoded', // use
+$server->register(  'obtenerDatosPersonales', 
+                    array('datos_usuario' => 'tns:datos_usuario'), 
+                    array('return' => 'tns:datos_persona_salidad'), 
+                    'urn:mi_ws1', 
+                    'urn:hellowsdl2#calculo_edad', 
+                    'rpc', 
+                    'encoded', 
                     'Funcion que obtiene los datos de un empleado' 
+);
+
+$server->register(  'ventaSatisfactoria', 
+                    array('datos_venta' => 'tns:datos_venta'), 
+                    array('return' => 'tns:esactivo'), 
+                    'urn:mi_ws1', 
+                    'urn:hellowsdl2#calculo_edad', 
+                    'rpc', 
+                    'encoded', 
+                    'Funcion crea el detalle satisfactorio de la venta' 
 );
 
 $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';

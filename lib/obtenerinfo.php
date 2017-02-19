@@ -117,5 +117,75 @@ class obtenerinfo{
 		return false;
     }
     
+    function obtenerAtencionVsVenta($fechainicio, $fechafin, $sucursal){
+        $conexion = $this->conexionBD();
+		$query = "select e.id_empleado, e.nombre || ' ' || e.apellido as nombre, v.id_sucursal, count(v.id_venta) as clientes, count(vs.id_venta) as venta 
+        from venta v inner join empleado e on
+	       e.id_empleado = v.id_empleado 
+            left join venta_satisfactoria vs on 
+    	       vs.id_venta = v.id_venta
+        where
+            v.inicio_venta between '".$fechainicio."' and '".$fechafin."' and
+            v.id_sucursal = '".$sucursal."'
+        group by 1, 2, 3";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;        
+    }
+    
+    function obtenerNumeroAtendidos($fechainicio, $fechafin, $sucursal){
+        $conexion = $this->conexionBD();
+		$query = "select e.id_empleado, e.nombre || ' ' || e.apellido as nombre, v.id_sucursal, count(*) as atendidos from venta v inner join empleado e on
+	           e.id_empleado = v.id_empleado 
+            where
+    	           v.inicio_venta between '".$fechainicio."' and '".$fechafin."' and
+                    v.id_sucursal = '".$sucursal."'
+            group by 1, 2, 3";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;        
+    }    
+    
+    function obtenerTiempoAtencion($fechainicio, $fechafin, $sucursal){
+        $conexion = $this->conexionBD();
+		$query = "select e.nombre || ' ' || e.apellido as nombre,  extract ('epoch' from  sum(fin_venta -inicio_venta)::interval)::float / 60  as tiempoventa 
+	               From venta v inner join empleado e on
+    	               v.id_empleado = e.id_empleado
+                where
+	               v.inicio_venta between '".$fechainicio."' and '".$fechafin."'  and
+                   v.id_sucursal = '".$sucursal."'
+                group by 1";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;        
+    }     
+    
 }
 ?>
