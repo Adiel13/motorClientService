@@ -60,5 +60,9 @@ if($_POST['iniciosesion']){
     $f = new obtenerinfo();
     $respuesta = $f->obtenerTiempoAtencion($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
 	print_r (json_encode($respuesta));
+}else if($_POST['obtenerTablaVenta']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerTablaVenta($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
+	print_r (json_encode($respuesta));
 }
 ?>

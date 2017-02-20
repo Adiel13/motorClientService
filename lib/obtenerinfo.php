@@ -185,7 +185,86 @@ class obtenerinfo{
         }		
         pg_close($conexion);
 		return false;        
-    }     
+    }   
+
+    function obtenerTablaVenta($fechainicio, $fechafin, $sucursal){
+        $conexion = $this->conexionBD();
+		$query = "select s.*, ss.contindividual, ss.porcentajeventa, ss.vindividual, ss.porcentajemonto from
+            (select t.*, (t.atendidos::float/tt.total::float)::float * 100 as porcentajeatendidos, ttt.tiempo, tttt.tiempoventa,
+                ( ((extract ('epoch' from tttt.tiempoventa::interval))::float /3600)/ (ttt.tiempo*3600)) *100 as porcentajeatencion
+                    from
+                        (select e.id_empleado, e.nombre || ' ' || e.apellido as nombre, v.id_sucursal, count(*) as atendidos 
+		                  from venta v inner join empleado e on
+			                 e.id_empleado = v.id_empleado 
+                           where
+		                      v.inicio_venta between '".$fechainicio."' and '".$fechafin."'
+	                       group by 1, 2, 3
+                        )t	inner join (
+                        select  v.id_sucursal, count(*) as total from venta v 
+		                  where
+		                      v.inicio_venta between '".$fechainicio."' and '".$fechafin."'
+	                           group by 1
+                            ) tt on
+	                           t.id_sucursal = tt.id_sucursal
+                                inner join 
+    	                           (select id_empleado, sum(s.horas_contratacion) as tiempo 
+				                    from(        
+					                   select bs.fecha_inicio::date, bs.id_empleado,e.horas_Contratacion, count(*)as veces 
+					                       From bitacora_Sesion bs
+						                      inner join empleado e on 
+							                     e.id_empleado = bs.id_empleado 
+                                       where
+						              bs.fecha_inicio between '".$fechainicio."' and '".$fechafin."'  and
+                    	               bs.sistema = 2
+					               group by 1,2,3
+					               ) s
+			                     group by 1) ttt on 
+            	                   t.id_empleado = ttt.id_empleado
+				                    inner join 
+                                    (select id_empleado, sum(fin_venta -inicio_venta)  as tiempoventa 
+						              From venta 
+                                   where
+						              inicio_venta between '".$fechainicio."' and '".$fechafin."'
+					               group by 1
+                                    ) tttt on 
+                 	              t.id_empleado = tttt.id_empleado
+        )s left join 
+        (
+            select t.id_empleado, t.id_sucursal,  t.contindividual, t.contindividual::float/tt.conttotal::float * 100 as porcentajeventa, 
+            t.vindividual, t.vindividual::float/tt.vtotal::float * 100 as porcentajemonto
+            from
+                (select id_empleado, id_sucursal, sum(monto) as vindividual, count(monto) contindividual  From venta_satisfactoria vs inner join venta v on
+	               vs.id_venta = v.id_venta 
+                    where
+    	               v.inicio_venta between '".$fechainicio."' and '".$fechafin."'
+               group by 1, 2) t inner join 
+                (
+                select id_sucursal, sum(monto) as vtotal, count(monto) as conttotal  From venta_satisfactoria vs inner join venta v on
+	               vs.id_venta = v.id_venta 
+                    where
+    	               v.inicio_venta between '".$fechainicio."' and '".$fechafin."'
+                    group by 1
+                ) tt on
+                   t.id_sucursal = tt.id_sucursal
+        ) ss on
+ 	          s.id_sucursal = ss.id_sucursal and
+                s.id_empleado = ss.id_empleado
+        where
+    	   s.id_sucursal =  '".$sucursal."'
+           group by 1,2,3,4,5,6,7,8,9,10,11,12";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;        
+    }   
     
 }
 ?>
