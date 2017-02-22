@@ -264,7 +264,51 @@ class obtenerinfo{
         }		
         pg_close($conexion);
 		return false;        
+    } 
+    
+    function obtenerVendedores($sucursal){
+        $conexion = $this->conexionBD();
+		$query = "select em.id_empleado, em.nombre || ' ' || em.apellido as nombre from empleado_empresa e inner join usuario u on 
+	               e.id_empleado = u.id_empleado
+    	               inner join empleado em on
+        	               em.id_empleado = u.id_empleado
+                    where
+    	               e.id_sucursal = '".$sucursal."' and
+                        u.tipo_usuario = 3";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;        
     }   
     
+    function obtenerVentas($empleado){
+        $conexion = $this->conexionBD();
+		$query = "select id_venta, inicio_venta, ev.descripcion  From venta v inner join estado_venta ev on 
+            v.estado_venta = ev.estado_venta
+            where
+	           v.id_empleado ='".$empleado."' and
+                ev.estado_venta > 1 
+                order by 1 asc";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;        
+    }  
 }
 ?>

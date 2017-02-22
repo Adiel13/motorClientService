@@ -64,5 +64,13 @@ if($_POST['iniciosesion']){
     $f = new obtenerinfo();
     $respuesta = $f->obtenerTablaVenta($_POST['finicio'], $_POST['ffin'], $_POST['sucursal']);
 	print_r (json_encode($respuesta));
+}else if($_POST['obtenerVendedores']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerVendedores($_POST['sucursal']);
+	print_r (json_encode($respuesta));
+}else if($_POST['obtenerVentas']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerVentas($_POST['empleado']);
+	print_r (json_encode($respuesta));
 }
 ?>
