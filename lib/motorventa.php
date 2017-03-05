@@ -20,7 +20,6 @@ class motorventa{
             $total = pg_num_rows($resultado);
             if ($total > 0) {
                 $venta = pg_fetch_all($resultado);
-               // return $venta[0]['crear_venta'];
 				if($venta[0]['crear_venta'] != -1){					
 					return $venta[0]['crear_venta'];
 				}else{
@@ -41,8 +40,7 @@ class motorventa{
             $resultado = pg_exec($conexion, $query);
             $total = pg_num_rows($resultado);
             if ($total > 0) {
-                $venta = pg_fetch_all($resultado);
-                
+                $venta = pg_fetch_all($resultado);                
 				if($venta[0]['finalizar_venta'] == 1){					
 					return $venta[0]['finalizar_venta'];
 				}else{
@@ -76,9 +74,4 @@ class motorventa{
 		return false;
     }
 }
-
-/*$obj = new motorventa();
-$idventa= $obj->ventaSatisfactoria(84, 5000, 1, '','');
-echo $$idventa;*/
-
 ?>

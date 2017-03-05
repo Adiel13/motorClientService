@@ -3,6 +3,7 @@ require_once('lib/nusoap.php');
 include_once('iniciosesion.php');
 include_once('obtenerinfo.php');
 include_once('motorventa.php');
+include_once('accionesgerenciales.php');
 
 $server = new nusoap_server();
 $server->configureWSDL('Servicio ITG', 'urn:mi_ws1');
@@ -64,6 +65,24 @@ $server->wsdl->addComplexType(  'datos_venta',
                                         'descripcion' => array('name' => 'descripcion','type' => 'xsd:string')
                                      )
 );
+
+$server->wsdl->addComplexType(  'ingreso_nota', 
+                                'complexType', 
+                                'struct', 
+                                'all', 
+                                '',
+                                array(  'token'   => array('name' => 'token','type' => 'xsd:string'),
+                                        'mensaje' => array('name' => 'mensaje','type' => 'xsd:string'),
+                                        'tipo' => array('name' => 'tipo','type' => 'xsd:integer'),
+                                        'vendedor' => array('name' => 'vendedor','type' => 'xsd:string')
+                                     )
+);
+
+function ingresarNota($datos) {
+	$nota = new acciongerencial();
+	$res = $nota->crearaccion($datos['token'], $datos['mensaje'], $datos['tipo'], $datos['vendedor']);
+	return array('mensaje' => $res);
+}
 
 function ventaSatisfactoria($datos) {
 	$venta = new motorVenta();
@@ -142,19 +161,19 @@ $server->register(  'esSesionActiva', // nombre del metodo o funcion
                     array('datos_persona_entrada' => 'tns:datos_persona_entrada'), // parametros de entrada
                     array('return' => 'tns:esactivo'), // parametros de salida
                     'urn:mi_ws1', // namespace
-                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
-                    'rpc', // style
-                    'encoded', // use
+                    'urn:hellowsdl2#calculo_edad',
+                    'rpc',
+                    'encoded', 
                     'Funcion que verifica si es activa una sesión' 
 );
 
-$server->register(  'cerrarSesion', // nombre del metodo o funcion
-                    array('datos_persona_entrada' => 'tns:datos_persona_entrada'), // parametros de entrada
-                    array('return' => 'tns:esactivo'), // parametros de salida
-                    'urn:mi_ws1', // namespace
-                    'urn:hellowsdl2#calculo_edad', // soapaction debe ir asociado al nombre del metodo
-                    'rpc', // style
-                    'encoded', // use
+$server->register(  'cerrarSesion', 
+                    array('datos_persona_entrada' => 'tns:datos_persona_entrada'), 
+                    array('return' => 'tns:esactivo'), 
+                    'urn:mi_ws1', 
+                    'urn:hellowsdl2#calculo_edad', 
+                    'rpc', 
+                    'encoded', 
                     'Funcion que cierra la sesion' 
 );
 
@@ -171,6 +190,16 @@ $server->register(  'obtenerDatosPersonales',
 
 $server->register(  'ventaSatisfactoria', 
                     array('datos_venta' => 'tns:datos_venta'), 
+                    array('return' => 'tns:esactivo'), 
+                    'urn:mi_ws1', 
+                    'urn:hellowsdl2#calculo_edad', 
+                    'rpc', 
+                    'encoded', 
+                    'Funcion crea el detalle satisfactorio de la venta' 
+);
+
+$server->register(  'ingresarNota', 
+                    array('ingreso_nota' => 'tns:ingreso_nota'), 
                     array('return' => 'tns:esactivo'), 
                     'urn:mi_ws1', 
                     'urn:hellowsdl2#calculo_edad', 

@@ -72,5 +72,17 @@ if($_POST['iniciosesion']){
     $f = new obtenerinfo();
     $respuesta = $f->obtenerVentas($_POST['empleado']);
 	print_r (json_encode($respuesta));
+}else if($_POST['obtenerTipoAcciones']){
+    $f = new obtenerinfo();
+    $respuesta = $f->obtenerTipoAcciones();
+	print_r (json_encode($respuesta));
+}else if($_POST['ingresarNota']){
+	$datos = array( 'token' => $_POST['tokensesion'],
+				    'tipo' => $_POST['tipo'],
+                    'mensaje' => $_POST['mensaje'],
+                    'vendedor' => $_POST['vendedor']
+                  );
+    $respuesta = sendDataWS("ingreso_nota", $datos, 'ingresarNota');	
+	print_r (json_encode($respuesta));
 }
 ?>

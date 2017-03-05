@@ -310,5 +310,22 @@ class obtenerinfo{
         pg_close($conexion);
 		return false;        
     }  
+    
+    function obtenerTipoAcciones(){
+        $conexion = $this->conexionBD();
+		$query = "select * from tipo_accion;";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $datos = pg_fetch_all($resultado);				
+				return $datos;
+            }			
+        }		
+        pg_close($conexion);
+		return false;   
+    }
 }
 ?>
