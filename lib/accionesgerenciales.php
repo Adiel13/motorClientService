@@ -29,5 +29,23 @@ class acciongerencial{
         pg_close($conexion);
 		return false;
     }
+    
+    function cargarAcciones($vendedor){
+        $conexion = $this->conexionBD();
+		$query = "select id_accion, mensaje From accion_empleado where
+	           id_empleado = '".$vendedor."'";		
+		if (!$conexion) {
+            return false;
+        } else {
+            $resultado = pg_exec($conexion, $query);
+            $total = pg_num_rows($resultado);
+            if ($total > 0) {
+                $acciones = pg_fetch_all($resultado);                
+                return $acciones;				                
+            }			
+        }		
+        pg_close($conexion);
+		return false;
+    }
 }
 ?>

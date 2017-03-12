@@ -1,6 +1,7 @@
 <?php
 require_once('lib/nusoap.php');
 include_once('../lib/obtenerinfo.php');
+include_once('../lib/accionesgerenciales.php');
 
 function sendDataWS($nombreParametro, $data, $nombreMetodo){
 	$WSDL = "http://67.205.153.106/lib/webservice.php?wsdl";
@@ -83,6 +84,10 @@ if($_POST['iniciosesion']){
                     'vendedor' => $_POST['vendedor']
                   );
     $respuesta = sendDataWS("ingreso_nota", $datos, 'ingresarNota');	
+	print_r (json_encode($respuesta));
+}else if($_POST['cargarAcciones']){
+    $f = new acciongerencial();
+    $respuesta = $f->cargarAcciones($_POST['vendedor']);
 	print_r (json_encode($respuesta));
 }
 ?>
